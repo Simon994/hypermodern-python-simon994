@@ -6,7 +6,7 @@ def tests(session):
     if session.posargs:
         test_files = session.posargs
     else:
-        test_files = ["--cov"]
+        test_files = ["--cov", "-m", "not e2e"]
     
     session.run("poetry", "install", external=True)
     session.run("pytest", *test_files)
