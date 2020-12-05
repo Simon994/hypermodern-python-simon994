@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "hypermodern-python-simon994"
+version = "0.1.0"
+description = "The hypermodern Python project"
+authors = ["SimonN <65023744+Simon994@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/Simon994/hypermodern-python-simon994"
+repository = "https://github.com/Simon994/hypermodern-python-simon994"
+keywords = ["hypermodern"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+click = "^7.1.2"
+requests = "^2.25.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+hypermodern-python = "hypermodern_python_simon994.console:main"
