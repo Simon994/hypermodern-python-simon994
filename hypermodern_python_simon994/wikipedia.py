@@ -22,6 +22,7 @@ def main():
             click.secho(title, fg="green")
             click.echo(textwrap.fill(extract))
 
-        except:
-            click.secho('Oops, something went wrong!', fg='red')
+        except requests.exceptions.RequestException as error:
+            error_message = str(error)
+            raise click.ClickException(error_message)
 
