@@ -1,28 +1,13 @@
-import textwrap
-
 import click
 import requests
 
-from . import __version__
+API_URL = "https://{language}.wikipedia.org/api/rest_v1/page/random/summary"
 
-API_URL = "https://en.wikipedia.org/api/rest_v1/page/random/summary"
-
-@click.command()
-@click.version_option(version=__version__)
-def main():
-    """The hypermodern Python project."""
-    with requests.get(API_URL) as response:
-        try:
+def random_page(language="en"):
+    try:
+        with requests.get(API_URL.format(language=language)) as response:
             response.raise_for_status()
-            data = response.json()
-
-            title = data["title"]
-            extract = data["extract"]
-
-            click.secho(title, fg="green")
-            click.echo(textwrap.fill(extract))
-
-        except requests.exceptions.RequestException as error:
-            error_message = str(error)
-            raise click.ClickException(error_message)
-
+            return response.json()
+    except requests.RequestException as error:
+        message = str(error)
+        raise click.ClickException(message)

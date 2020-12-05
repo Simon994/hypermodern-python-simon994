@@ -1,5 +1,6 @@
 import click.testing
 import pytest
+import requests
 
 from hypermodern_python_simon994 import console
 
@@ -8,12 +9,8 @@ def runner():
     return click.testing.CliRunner()
 
 @pytest.fixture
-def mock_requests_get(mocker):
-    mock = mocker.patch("requests.get")
-    mock.return_value.__enter__.return_value.json.return_value = {
-        "title": "Lorem Ipsum",
-        "extract": "Lorem ipsum dolor sit amet",
-    }
+def mock_wikipedia_random_page(mocker):
+    mock = mocker.patch("hypermodern_python_simon994.wikipedia.random_page")
     return mock
 
 def test_main_succeeds(runner, mock_requests_get):
@@ -30,5 +27,19 @@ def test_main_invokes_requests_get(runner, mock_requests_get):
 
 def test_main_uses_en_wikipedia(runner, mock_requests_get):
     runner.invoke(console.main)
-    args, _ = mock_requests_get.call_args
+    (args, _) = mock_requests_get.call_args
     assert "en.wikipedia.org" in args[0]
+
+def test_main_returns_1_on_request_error(runner, mock_requests_get):
+    mock_requests_get.side_effect = Exception("Boom!")
+    result = runner.invoke(console.main)
+    assert result.exit_code == 1
+
+def test_main_prints_message_on_request_error(runner, mock_requests_get):
+    mock_requests_get.side_effect = requests.RequestException
+    result = runner.invoke(console.main)
+    assert "Error" in result.output
+
+def test_main_uses_given_language(runner, mock_wikipedia_random_page):
+    runner.invoke(console.main, ["--language=pl"])
+    mock_wikipedia_random_page.assert_called_with(language="pl")
