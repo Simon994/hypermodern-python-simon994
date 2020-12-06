@@ -1,9 +1,10 @@
-import nox
 import tempfile
+
+import nox
 
 locations = "hypermodern_python_simon994", "tests", "noxfile.py"
 
-nox.options.sessions = "lint", "tests", "safety"
+nox.options.sessions = "lint", "tests", "safety", "mypy", "pytype"
 
 
 @nox.session(python=["3.8", "3.7"])
@@ -23,6 +24,7 @@ def install_with_constraints(session, *args, **kwargs):
             "export",
             "--dev",
             "--format=requirements.txt",
+            "--without-hashes",
             f"--output={requirements.name}",
             external=True,
         )
@@ -57,3 +59,18 @@ def safety(session):
         )
         install_with_constraints(session, "safety")
         session.run("safety", "check", f"--file={requirements.name}", "--full-report")
+
+
+@nox.session(python=["3.8", "3.7"])
+def mypy(session) -> None:
+    args = session.posargs or locations
+    install_with_constraints(session, "mypy")
+    session.run("mypy", *args)
+
+
+@nox.session(python="3.7")
+def pytype(session):
+    """Run the static type checker."""
+    args = session.posargs or ["--disable=import-error", *locations]
+    install_with_constraints(session, "pytype")
+    session.run("pytype", *args)
