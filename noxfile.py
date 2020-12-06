@@ -39,12 +39,7 @@ def black(session):
 @nox.session(python=["3.8", "3.7"])
 def lint(session):
     args = session.posargs or locations
-    session.install(
-        "flake8",
-        "flake8-bandit",
-        "flake8-black",
-        "flake8-bugbear",
-    )
+    session.install("flake8", "flake8-bandit", "flake8-black", "flake8-bugbear")
     session.run("flake8", *args)
 
 
